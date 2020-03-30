@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>digitalclock</title>
+    <style>
+        body{
+            font-family: sans-serif;
+        }
+        .dialog{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dialog.hide{
+            display: none;
+        }
+        .dialog>#date{
+            width: 300px;
+        }
+        .dialog>#btn{
+            margin-top: 20px;
+            border: none;
+            background-color: blue;
+            outline: none;
+            color: white;
+            padding: 6px 100px;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            
+        }
+        .box{
+            /* display: none; */
+            opacity: 0;
+            transform: scale(0);
+            transition: all 200ms ease-in-out;
+            width: 300px;
+            height: auto;
+            border: 1px solid green;
+            margin: auto;
+            }
+        .box.show{
+            /* display: block;  */
+            opacity: 1;
+            transform: scale(1);
+        }    
+        .box>.head{
+            text-align: center;
+            margin-top: 20px;
+            
+        }    
+        .box>.timer{
+            margin-top: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+
+        }    
+        .box>button#changetimer{
+            background-color: blue;
+            margin: auto;
+            display: block;
+            outline: none;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            padding:6px 60px;
+            border-radius: 2px;
+            margin-bottom: 20px;
+        }
+        .timer>span{
+            font-family: sans-serif;
+            font-weight: bolder;
+            font-size: 1.6rem;
+        }
+    </style>
+</head>
+<body>
+  <div class="dialog">
+    <input id="date" type="datetime-local" placeholder="choose date" >
+    <button id="btn" type="button">submit</button>
+  </div>
+    <div class="box">
+        <div class="head">
+            Countdown Started
+        </div>
+
+        <div class="timer">
+            <span>hh:</span>
+            <span>mm:</span>
+            <span>ss</span>
+        </div>
+        <button type="button" id="changetimer">Change Timer</button>
+    </div>
+    <script>
+        var btn=document.getElementById("btn")
+        var inpate=document.getElementById("date")
+        var box=document.querySelector(".box")
+        var dialog=document.querySelector(".dialog")
+        var changetimer=document.getElementById("changetimer")
+        var spantag=document.querySelectorAll(".timer>span")
+        let hr,min,sec,x,y;
+        
+
+        btn.addEventListener("click",()=>{
+              x= new Date(inpate.value)
+              y =new Date(); 
+               
+               hr=x.getHours()-y.getHours()-1
+               min=60-y.getMinutes()+x.getMinutes();
+               sec=60-y.getSeconds()
+            box.classList.toggle("show")
+            dialog.classList.toggle("hide")
+
+               if(Math.floor(sec/60)){
+                   min+=Math.floor(sec/60)
+                   sec-=Math.floor(sec/60)*60
+               }
+               if(Math.floor(min/60>0)){
+
+                hr+=Math.floor(min/60)
+                min-=Math.floor(min/60)*60
+               }
+              
+
+
+               spantag[0].textContent=hr+":";
+               spantag[1].textContent=min+":"
+               spantag[2].textContent=sec
+
+               setInterval(()=>{
+                // spantag[0].textContent=hr;
+            //    spantag[1].textContent=min
+                sec--
+                if(sec>=0){
+                    spantag[2].textContent=sec
+                    }else{
+                    sec=59
+                    min--;
+                    spantag[2].textContent=sec
+                    if(min<0){
+                        min=59;
+                        hr--;
+
+                         spantag[0].textContent=hr+":"
+                         spantag[1].textContent=min+":"
+                     }else{
+                        spantag[1].textContent=min+":"
+                     }
+                   
+                   
+                 
+                }
+                
+             
+               },1000)
+                console.log(y.getHours())
+              
+
+          console.log()
+        })
+      changetimer.addEventListener("click",()=>{
+          box.classList.toggle("show")
+          dialog.classList.toggle("hide")
+      })
+    </script>
+</body>
+</html>

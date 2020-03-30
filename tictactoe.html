@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play</title>
+    <style>
+        *{
+            font-family: sans-serif;
+        }
+        .box{
+            display: grid;
+            grid-template-columns: 50px 50px 50px;
+            grid-template-rows:50px 50px 50px ;
+            grid-gap: 1px;
+            
+        }
+        div.box>div{
+
+            text-align: center;
+            line-height: 50px;
+            background-color: rgba(44, 44, 233, 0.8);
+            font-weight: bolder;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+        }
+        #start{
+            background-color: transparent;
+            color: blue;
+            border: 1px solid blue;
+            outline: none;
+            border-radius: 5px;
+            width: 100px;
+            margin: 20px;
+            height: 40px;
+            position: relative;
+            transition: all 200ms ease;
+        }
+        #start.notclicked::after{
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            content: "please start a game";
+            color: red;
+        }
+        #start:active{
+            background-color: rgba(44, 44, 233, 0.8);
+            color: white;
+            border: none;
+        }
+        .container{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+    </style>
+</head>
+<body>
+
+   <div class="container">
+    <div class="box">
+        <div class="grid-box"></div>
+        <div class="grid-box"></div>
+        <div class="grid-box"></div>
+        <div class="grid-box"></div>
+        <div class="grid-box"></div>
+        <div class="grid-box"></div>
+        <div class="grid-box"></div>
+        <div class="grid-box"></div>
+        <div class="grid-box"></div>
+    </div>
+    <button id="start" type="button">Start Game</button>
+   </div>
+    
+    <script>
+     
+    var gridBox=document.querySelectorAll("div.grid-box")
+    function checkHorizontalMAtch(index,value){
+        if(0<=index && index<=2){
+          for(var i=0;i<=2;i++){
+              if(gridBox[i].textContent!=value)
+                  return false;
+              
+          }
+
+      }
+      else if(3<=index && index<=5){
+        for(var i=3;i<=5;i++){
+              if(gridBox[i].textContent!=value)
+                  return false;
+              
+          }
+      }
+     else if(6<=index && index<=8){
+        for(var i=6;i<=8;i++){
+              if(gridBox[i].textContent!=value)
+                  return false;
+              
+          }
+      }
+   return true;
+    
+    }
+    function checkVerticalMatch(index,value){
+        if(index%3===0){
+            for(var i=0;i<=8;i+=3){
+                if(gridBox[i].textContent!=value)
+                    return false;
+                
+            }
+        }
+       else if(index%3===1){
+            for(var i=1;i<=8;i+=3){
+                if(gridBox[i].textContent!=value)
+                    return false;
+                
+            }
+        }
+       else if(index%3===2){
+            for(var i=2;i<=8;i+=3){
+                if(gridBox[i].textContent!=value)
+                    return false;
+                
+            }
+
+        }
+        return true;
+    
+    }
+    function lrCross(index,value){
+        if( index%4===0){
+          for(var i=0;i<=8;i+=4){
+
+              if(gridBox[i].textContent!=value)
+                  return false;
+              
+          }
+          return true;
+        }
+        return false
+    }
+    function rlCross(index,value){
+        if(index%2===0){
+            for(var i=2;i<8;i+=2){
+              if(gridBox[i].textContent!=value)
+                  return false;
+              
+
+          }
+          return true;
+        }
+        return false
+    }
+    function checkCrossMatch(index,value){
+      var lr=lrCross(index,value)
+      var rl=rlCross(index,value)
+      if(lr || rl)
+         return true ;
+         return false;
+      
+    }
+   function checkWins(index,value){
+      var horizontal= checkHorizontalMAtch(index,value)
+      var vertical= checkVerticalMatch(index,value)
+      var cross=checkCrossMatch(index,value);
+      console.log(horizontal,vertical,cross)
+       if(horizontal||vertical||cross)
+           return true;
+       
+       return false;
+     }
+
+  
+    function start(){
+        let counter=0;
+        let flag=0;
+        for(var i=0;i<gridBox.length;i++){
+            gridBox[i].textContent=""
+            gridBox[i].classList.remove("tapped")
+        }
+       
+       
+    gridBox.forEach((element,index)=>{
+        element.addEventListener("click",()=>{
+           if(flag==0 && !element.classList.contains("tapped") ) {
+            element.classList.add("tapped")
+           element.textContent="*";
+           counter++;
+           console.log(counter)
+
+           flag=1;
+          if( checkWins(index,"*")){
+
+              alert("first player won")
+              startGame.classList.toggle("start")
+              counter=0;
+           }else if(counter===gridBox.length){
+               alert("Game Draw")
+               startGame.classList.toggle("start")
+               counter=0;
+            }
+          }else if(flag==1 &&  !element.classList.contains("tapped")){
+            element.textContent="0";
+            element.classList.add("tapped")
+            
+           counter++
+           console.log(counter)
+            flag=0; 
+            if( checkWins(index,"0")){
+                startGame.classList.toggle("start")
+                  alert("second player won")
+                  counter=0;
+            }else if(counter===gridBox.length){
+               alert("Game Draw")
+               startGame.classList.toggle("start")
+               counter=0;
+            }
+     } 
+    
+    })
+        
+    })
+ }
+ var startGame=document.getElementById("start");
+    startGame.addEventListener("click",()=>{
+        if(startGame.classList.contains("start")){
+            var x=confirm("Already playing ! Do you want to restart?")
+            if(x)
+              start()
+        }else{
+            console.log("called me to start")
+            startGame.classList.toggle("start")
+            start()
+        }
+         })
+
+ //to check if user trying to start a game  without clickking a start button
+//   and warn a user to click start  button to start a match 
+         gridBox.forEach((ele)=>{
+  
+         ele.addEventListener("click",()=>{
+          if(!startGame.classList.contains("start")){
+        startGame.classList.toggle("notclicked")
+        setTimeout(()=>{
+        startGame.classList.toggle("notclicked")
+
+        },1000)
+            }
+           })
+         })
+  
+
+ 
+    </script>
+</body>
+</html>
